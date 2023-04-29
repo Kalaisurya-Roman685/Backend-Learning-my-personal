@@ -1,6 +1,6 @@
 import Loginmodel from "../../models/login/Loginmodel.js"
 
-
+import bcrypt from 'bcrypt';
 
 export const LoginControlsData = async (req, res) => {
 
@@ -50,9 +50,22 @@ export const LoginControlsData = async (req, res) => {
 
 export const LoginAdmin = async (req, res) => {
     const { firstname, lastname, email, password, image, dob, contactno } = req.body;
+
+
+
     try {
-        if (email == "kalai@gmail.com" && password == "12345") {
-            return await res.status(200).json("User Login in Success");
+
+
+        const salt = bcrypt.genSaltSync(10);
+        const hash = await bcrypt.hashSync(password, salt);
+
+        const exitsusers = await Loginmodel.findOne({ email: email });
+        if (email == "kalai@gmail.com" && password == "kalai1234") {
+
+            const data = {
+                id: exitsusers?.id,
+            }
+            return await res.status(200).json(data);
         }
         else {
             return res.status(404).json("Username and password Wrong...!");
