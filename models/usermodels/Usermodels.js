@@ -24,8 +24,12 @@ const UserMange = new mongoose.Schema({
     },
     refercode: {
         type: String,
+    },
+    image: {
+        type: String,
+    
     }
 })
 
 
-export default mongoose.model("usermanagement",UserMange);
+export default mongoose.model("usermanagement", UserMange);

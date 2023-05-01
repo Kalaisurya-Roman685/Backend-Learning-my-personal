@@ -3,9 +3,14 @@ import dotenv from 'dotenv';
 
 import cors from 'cors';
 
-import mongoose from "mongoose";
+
+
+import mongoose, { now } from "mongoose";
 import routinglogin from "./routers/loginrouter/Loginrouter.js";
 import routinguser from "./routers/userrouting/Userrouting.js";
+
+
+
 
 const ConnectMongoose = async () => {
     try {
@@ -20,6 +25,8 @@ dotenv.config();
 app.use(express.json());
 
 app.use(cors());
+
+app.use("/Images", express.static("./Images"))
 
 // api routings
 

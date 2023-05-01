@@ -10,8 +10,4 @@ routinglogin.post("/login", LoginAdmin);
 routinglogin.get("/user/:id", GetUserLogindata);
 routinglogin.put("/user/update/:id", UpdateUserLogindata);
 
-
-
-
-
 export default routinglogin

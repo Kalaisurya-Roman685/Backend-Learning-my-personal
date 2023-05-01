@@ -99,7 +99,6 @@ export const GetUserLogindata = async (req, res) => {
 export const UpdateUserLogindata = async (req, res) => {
     try {
         const Data = await Loginmodel.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-
         if (Data) {
             res.status(200).json(Data);
         }

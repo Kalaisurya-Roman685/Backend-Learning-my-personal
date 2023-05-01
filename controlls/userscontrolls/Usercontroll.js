@@ -6,7 +6,7 @@ import referralcodes from 'referral-codes'
 
 // create
 export const UserCreate = async (req, res) => {
-    const { username, email, password, startdate, enddate, refercode } = req.body;
+    const { username, email, password, startdate, enddate, refercode, image } = req.body;
     try {
         const existuserscheck = await Usermodels.findOne({ email });
         if (existuserscheck) {
@@ -26,8 +26,11 @@ export const UserCreate = async (req, res) => {
             password: hash,
             startdate: startdate,
             enddate: enddate,
-            refercode: username.toUpperCase().concat(RefferFriendsCode)
+            refercode: username.toUpperCase().concat(RefferFriendsCode),
+            image: req.file.path
         });
+
+        console.log(CreateUser, "kalai")
         await CreateUser.save();
         res.status(201).json(CreateUser);
 
@@ -44,6 +47,15 @@ export const UserCreate = async (req, res) => {
 export const UserUpdate = async (req, res) => {
 
     try {
+        // const datas = {
+        //     username: req.body.username,
+        //     email: req.body.email,
+        //     password: req.body.hash,
+        //     startdate: req.body.startdate,
+        //     enddate: req.body.enddate,
+        //     refercode: req.body.username.toUpperCase().concat(RefferFriendsCode),
+           
+        // }
         await Usermodels.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
         res.status(200).json("Update Data...");
 
