@@ -6,37 +6,30 @@ import referralcodes from 'referral-codes'
 
 // create
 export const UserCreate = async (req, res) => {
-    const { username, email, password, startdate, enddate, refercode, image } = req.body;
+    const { title, des, startdate, enddate, refercode, userId,image } = req.body;
     try {
-        const existuserscheck = await Usermodels.findOne({ email });
-        if (existuserscheck) {
-            return res.status(404).json("user already register")
-        }
-        const salt = bcrypt.genSaltSync(10);
-        const hash = await bcrypt.hashSync(password, salt);
-        const RefferFriendsCode = Math.floor(Math.random() * 4560000);
+
+        const RefferFriendsCode = Math.floor(Math.random() * 4567758476840000);
         const sample = referralcodes.generate({
             length: 10,
             count: 1,
             charset: referralcodes.charset('alphanumeric'),
         });
         const CreateUser = new Usermodels({
-            username: username,
-            email: email,
-            password: hash,
+            title: title,
+            userId: userId,
+            des: des,
             startdate: startdate,
             enddate: enddate,
-            refercode: username.toUpperCase().concat(RefferFriendsCode),
-            image: req.file.path
+            image:req.file.path,
+            refercode: RefferFriendsCode
         });
-
-        console.log(CreateUser, "kalai")
         await CreateUser.save();
         res.status(201).json(CreateUser);
 
     }
     catch (err) {
-        res.status(404).json("Somehting error usermanagement");
+        res.status(404).json("Something Missing...");
     }
 }
 
@@ -47,15 +40,6 @@ export const UserCreate = async (req, res) => {
 export const UserUpdate = async (req, res) => {
 
     try {
-        // const datas = {
-        //     username: req.body.username,
-        //     email: req.body.email,
-        //     password: req.body.hash,
-        //     startdate: req.body.startdate,
-        //     enddate: req.body.enddate,
-        //     refercode: req.body.username.toUpperCase().concat(RefferFriendsCode),
-           
-        // }
         await Usermodels.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
         res.status(200).json("Update Data...");
 

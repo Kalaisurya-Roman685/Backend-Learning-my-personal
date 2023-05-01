@@ -2,115 +2,107 @@ import Loginmodel from "../../models/login/Loginmodel.js"
 
 import bcrypt from 'bcrypt';
 
-export const LoginControlsData = async (req, res) => {
+import asyncHandler from 'express-async-handler';
+import { TokenGenrate } from "../../config/jwttoken.js";
 
-    const { firstname, lastname, email, password, image, dob, contactno } = req.body;
+export const LoginControlsData = asyncHandler(async (req, res) => {
 
-    // let existusers;
+    const email = req.body.email;
 
-    // try {
-    //     existusers = await Loginmodel.findOne({ email });
-    // }
-    // catch (err) {
-    //     console.log(err);
-    // }
-
-    // if (existusers) {
-    //     return res.status(404).json("user Alredy Register!!");
-    // }
-
-
-
-
-
-    try {
-
-        const users = await new Loginmodel({
-            firstname, lastname, email, password, dob, contactno, image
-        })
-
-        if (email == "kalai@gmail.com" && password == "kalai1234") {
-            await users.save();
-            return res.status(201).json(users);
-        }
-        else {
-            res.status(404).json("Something error!!!")
-        }
+    const Existusercheck = await Loginmodel.findOne({ email });
+    if (!Existusercheck) {
+        const responsedata = await Loginmodel.create(req.body);
+        res.status(201).json(responsedata);
+    }
+    else {
+        throw new Error("User Already Register..")
 
     }
-    catch (err) {
-        res.status(404).json("Something Wrong")
-    }
-
-}
 
 
 
 
+})
 
-export const LoginAdmin = async (req, res) => {
+
+
+
+
+export const LoginAdmin = asyncHandler(async (req, res) => {
     const { firstname, lastname, email, password, image, dob, contactno } = req.body;
 
 
 
-    try {
+    const existsusers = await Loginmodel.findOne({ email });
 
-
+    if (existsusers && existsusers.password == req.body.password) {
         const salt = bcrypt.genSaltSync(10);
         const hash = await bcrypt.hashSync(password, salt);
-
-        const exitsusers = await Loginmodel.findOne({ email: email });
-        if (email == "kalai@gmail.com" && password == "kalai1234") {
-
-            const data = {
-                id: exitsusers?.id,
-            }
-            return await res.status(200).json(data);
+        const data = {
+            id: existsusers?.id,
+            token: TokenGenrate(existsusers?.id)
         }
-        else {
-            return res.status(404).json("Username and password Wrong...!");
-
-        }
+        res.json(data);
     }
-    catch (err) {
-        res.status(404).json("User Not Found!!!");
+    else {
+        throw new Error("Invalid Creaditional..")
     }
-}
 
 
-export const GetUserLogindata = async (req, res) => {
-    try {
-        const Data = await Loginmodel.findById(req.params.id);
 
-        if (Data) {
-            res.status(200).json(Data);
-        }
-        else {
-            res.status(404).json("No Records and User Not Found...!");
-        }
+
+
+
+
+
+
+
+});
+
+
+export const GetUserLogindata = asyncHandler(async (req, res) => {
+
+    const Data = await Loginmodel.findById(req.params.id);
+
+    if (Data) {
+        res.json(Data);
     }
-    catch (err) {
-        res.status(404).json("something error!!!");
+    else {
+        throw new Error("No Records and User Not Found...!");
     }
-}
+
+
+})
 
 
 
-export const UpdateUserLogindata = async (req, res) => {
-    try {
-        const Data = await Loginmodel.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-        if (Data) {
-            res.status(200).json(Data);
-        }
-        else {
-            res.status(404).json("No Records and User Not Found...!");
-        }
+export const UpdateUserLogindata = asyncHandler(async (req, res) => {
+
+    const Data = await Loginmodel.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    if (Data) {
+        res.json(Data);
     }
-    catch (err) {
-        res.status(404).json("something error!!!");
+    else {
+        throw new Error("No Records and User Not Found...!");
     }
-}
 
 
+})
+
+
+
+
+export const UserDelete = asyncHandler(async (req, res) => {
+
+    const Data = await Loginmodel.findByIdAndDelete(req.params.id);
+    if (Data) {
+        res.json("User Deleted Successfully...");
+    }
+    else {
+        throw new Error("No Records and User Not Found...!");
+    }
+
+
+})
 
 
