@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 const UserMange = new mongoose.Schema({
     userId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userlogin",
         required: true
     },
     title: {

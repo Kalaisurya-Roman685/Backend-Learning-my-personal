@@ -35,7 +35,7 @@ routinguser.post("/create", upload, UserCreate);
 routinguser.put("/update/:id", upload, UserUpdate);
 routinguser.delete("/delete/:id", UserDelete);
 routinguser.get("/getuser/:id", UserSingleUser);
-routinguser.get("/allusers", UserAlluserData);
+routinguser.get("/allusers/:id", UserAlluserData);
 
 
 

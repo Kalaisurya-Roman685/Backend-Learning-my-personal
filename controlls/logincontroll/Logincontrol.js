@@ -5,6 +5,33 @@ import bcrypt from 'bcrypt';
 import asyncHandler from 'express-async-handler';
 import { TokenGenrate } from "../../config/jwttoken.js";
 
+import passport from "passport";
+
+
+import GoogleStrategy from 'passport-google-oauth20'
+// .Strategy;
+
+const GOOGLE_CLIENT_ID = '466864356994-5qbj5ji7nf7rq1v0i6m9vfv1eqmoaoh0.apps.googleusercontent.com'
+const GOOGLE_CLIENT_SECRET = "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"
+passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:8000/auth/google/callback" || "http://localhost:3000/auth/google/callback"
+},
+    function (accessToken, refreshToken, profile, cb) {
+        return cb(null, profile);
+
+    }
+));
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+})
+
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+})
+
 export const LoginControlsData = asyncHandler(async (req, res) => {
 
     const email = req.body.email;
@@ -62,8 +89,10 @@ export const LoginAdmin = asyncHandler(async (req, res) => {
 
 export const GetUserLogindata = asyncHandler(async (req, res) => {
 
-    const Data = await Loginmodel.findById(req.params.id);
 
+
+
+    const Data = await Loginmodel.findById(req.params.id);
     if (Data) {
         res.json(Data);
     }
@@ -78,7 +107,12 @@ export const GetUserLogindata = asyncHandler(async (req, res) => {
 
 export const UpdateUserLogindata = asyncHandler(async (req, res) => {
 
-    const Data = await Loginmodel.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+
+
+    const Data = await Loginmodel.findByIdAndUpdate(req.params.id, {
+        firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, password: req.body.password, image: req.file.path, dob: req.body.dob, contactno: req.body.contactno
+
+    }, { new: true });
     if (Data) {
         res.json(Data);
     }
